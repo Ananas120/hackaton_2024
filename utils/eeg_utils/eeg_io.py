@@ -796,7 +796,6 @@ def _write_eeg_mne(filename, events, ** kwargs):
 
     mne_struct.set_annotations(annots)
     mne_struct.info['subject_info'] = infos
-
     if filename.endswith(('.fif', '.fif.gz')):
         mne_struct.save(filename, overwrite = True, verbose = False)
     else:

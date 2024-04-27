@@ -55,6 +55,10 @@ _large_scale_bci_5f_marker   = {
     0 : 'passive', 1 : 'thumb finger (IM)', 2 : 'index finger (IM)', 3 : 'middle finger (IM)',
     4 : 'ring finger (IM)', 5 : 'pinkie finger (IM)', 90 : 'break', 91 : 'break', 92 : 'experiment end', 99 : 'relaxation'
 }
+_large_scale_bci_5f_marker   = {
+    0 : 'passive', 1 : 'Finger 1 (thumb)', 2 : 'Finger 2 (index)', 3 : 'Finger 3 (middle)',
+    4 : 'Finger 4 (ring)', 5 : 'Finger 5 (pinkie)', 90 : 'passive', 91 : 'passive', 92 : 'experiment end', 99 : 'passive'
+}
 _large_scale_bci_cla_marker = {
     0 : 'passive', 1 : 'left hand (IM)', 2 : 'right hand (IM)', 3 : 'neutral', 4 : 'left leg (IM)',
     5 : 'tongue (IM)', 6 : 'right leg (IM)', 90 : 'break', 91 : 'break', 92 : 'experiment end', 99 : 'relaxation'
@@ -258,7 +262,8 @@ def process_large_scale_bci_annots(directory, subset = None, subjects = None, tq
     
     dataset = []
     for file in tqdm(os.listdir(directory)):
-        if not file.endswith('.mat'): continue
+        if 'HFREQ' in file: continue
+        if not file.endswith(('.mat', '.fif')): continue
 
         if '-' in file:
             task, subj_id, date = file.split('-')[:3]
@@ -277,7 +282,8 @@ def process_large_scale_bci_annots(directory, subset = None, subjects = None, tq
             add_signal = True,
             add_infos  = True,
             stop_label = 92,
-            event_names = _large_scale_bci_5f_marker if task == '5f' else _large_scale_bci_cla_marker
+            event_names = _large_scale_bci_5f_marker if task == '5f' else _large_scale_bci_cla_marker,
+            target_rate = 200
         )
         for ev in events:
             ev.update({'id' : subj_id, 'task' : task, 'device' : 'EEG 1200', 'meas_date' : date})
